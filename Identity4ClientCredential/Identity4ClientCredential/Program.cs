@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddIdentityServer()
     .AddDeveloperSigningCredential()
-    .AddInMemoryApiScopes(Configuration.getApis())
+    .AddInMemoryApiScopes(Configuration.GetScopes())
     .AddInMemoryClients(Configuration.GetClients());
 
 var app = builder.Build();

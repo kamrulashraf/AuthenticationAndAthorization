@@ -1,3 +1,6 @@
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,7 +12,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", config => {
         config.Authority = "https://localhost:7288/";
-        config.Audience = "ApiOne";
+        //config.Audience = "ApiOne";
+        config.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false
+        };
         config.RequireHttpsMetadata = false;
     });
 
