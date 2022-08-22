@@ -1,22 +1,13 @@
-using Microsoft.AspNetCore.Identity;
+using Identity4ClientCredential;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddAuthentication("AuthCookie")
-    .AddCookie("AuthCookie", config =>
-    {
-        config.Cookie.Name = "Testing.cookie";
-        config.LoginPath = "/Home/login";
-    });
-
-builder.Services.AddAuthorization( config => {
-    config.AddPolicy("Admin", policy => policy.RequireClaim("Admin"));
-});
-
 builder.Services.AddRazorPages();
-builder.Services.AddControllersWithViews();
-
+builder.Services.AddIdentityServer()
+    .AddDeveloperSigningCredential()
+    .AddInMemoryApiScopes(Configuration.getApis())
+    .AddInMemoryClients(Configuration.GetClients());
 
 var app = builder.Build();
 
@@ -30,19 +21,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseIdentityServer();
 app.UseRouting();
-
-
-app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapRazorPages();
-
-app.UseEndpoints(endpoinst =>
-{
-    endpoinst.MapDefaultControllerRoute();
-}); 
-
+app.UseEndpoints(endpoints =>  endpoints.MapDefaultControllerRoute());  
 app.Run();

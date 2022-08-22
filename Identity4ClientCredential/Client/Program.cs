@@ -1,22 +1,18 @@
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddAuthentication("AuthCookie")
-    .AddCookie("AuthCookie", config =>
+//builder.Services.AddRazorPages();
+builder.Services.AddAuthentication()
+    .AddJwtBearer("Bearer", config =>
     {
-        config.Cookie.Name = "Testing.cookie";
-        config.LoginPath = "/Home/login";
+        config.Authority = "https://localhost:7288/";
+        config.Audience = "Client";
     });
 
-builder.Services.AddAuthorization( config => {
-    config.AddPolicy("Admin", policy => policy.RequireClaim("Admin"));
-});
-
-builder.Services.AddRazorPages();
-builder.Services.AddControllersWithViews();
-
+builder.Services.AddHttpClient();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -35,14 +31,11 @@ app.UseRouting();
 
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
-app.MapRazorPages();
-
-app.UseEndpoints(endpoinst =>
+//app.MapRazorPages();
+app.UseEndpoints(endpoints =>
 {
-    endpoinst.MapDefaultControllerRoute();
-}); 
-
+    endpoints.MapControllers();
+});
 app.Run();
